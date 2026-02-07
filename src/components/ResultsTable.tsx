@@ -128,6 +128,7 @@ export default function ResultsTable({
                       placeholder="—"
                       variant="standard"
                       inputProps={{ style: { textAlign: "center", width: "64px" } }}
+                      disabled={!row?.place}
                     />
                   </TableCell>
                 </TableRow>

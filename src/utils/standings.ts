@@ -5,6 +5,7 @@ export function computeStandings(tournament: Tournament): StandingsRow[] {
   const points = new Map<string, number>();
   const berger = new Map<string, number>();
   const order = new Map<string, number>();
+  let hasUnplayed = false;
 
   tournament.players.forEach((player, index) => {
     points.set(player.id, 0);
@@ -19,6 +20,7 @@ export function computeStandings(tournament: Tournament): StandingsRow[] {
       }
 
       if (!game.result) {
+        hasUnplayed = true;
         return;
       }
 
@@ -66,9 +68,11 @@ export function computeStandings(tournament: Tournament): StandingsRow[] {
     return (order.get(a.playerId) ?? 0) - (order.get(b.playerId) ?? 0);
   });
 
-  ranking.forEach((row, index) => {
-    row.place = index + 1;
-  });
+  if (!hasUnplayed) {
+    ranking.forEach((row, index) => {
+      row.place = index + 1;
+    });
+  }
 
   return rows;
 }

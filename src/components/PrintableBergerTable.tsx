@@ -110,7 +110,7 @@ export default function PrintableBergerTable({
         </table>
       </div>
       <Box mt={1}>
-        <Typography variant="body2">Главный судья {tournament.chiefJudge || ""}</Typography>
+        <Typography variant="body2">Главный судья: {tournament.chiefJudge || ""}</Typography>
       </Box>
     </Box>
   );
