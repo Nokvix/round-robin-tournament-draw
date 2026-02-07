@@ -3,7 +3,8 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  base: "/round-robin-tournament-draw/",
   test: {
-    environment: "node"
-  }
+    environment: "node",
+  },
 });
