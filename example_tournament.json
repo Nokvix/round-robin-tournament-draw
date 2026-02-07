@@ -1,0 +1,584 @@
+{
+  "schemaVersion": 1,
+  "tournament": {
+    "id": "da3d35c4-0e83-4ee0-bb53-97ae0aae2b7e",
+    "name": "Блиц-марафон ко дню рождения клуба",
+    "date": "2026-02-07",
+    "players": [
+      {
+        "id": "c6287221-9b2a-4e49-b87c-884ce622459f",
+        "name": "Бакунин А"
+      },
+      {
+        "id": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+        "name": "Бурцев А"
+      },
+      {
+        "id": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+        "name": "Имамгулов А"
+      },
+      {
+        "id": "d614e289-cdb9-45d7-b283-a522ef596f34",
+        "name": "Сагиров М"
+      },
+      {
+        "id": "db802054-dafd-4f54-974c-b414159b457d",
+        "name": "Шиморин Ф"
+      },
+      {
+        "id": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+        "name": "Гасс И"
+      },
+      {
+        "id": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+        "name": "Макаренков А"
+      },
+      {
+        "id": "80705225-e276-4296-8d5c-ba01cfca4abf",
+        "name": "Савчук В"
+      },
+      {
+        "id": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+        "name": "Кашников М"
+      },
+      {
+        "id": "0c756588-42af-4c11-a154-a4a4b7574e04",
+        "name": "Хасанов Т"
+      },
+      {
+        "id": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+        "name": "Васьтиков Е"
+      },
+      {
+        "id": "03a44baf-3792-4787-871a-70be2a8f032c",
+        "name": "Лобанов А"
+      }
+    ],
+    "shufflePlayers": false,
+    "rounds": [
+      {
+        "roundNumber": 1,
+        "games": [
+          {
+            "roundNumber": 1,
+            "whitePlayerId": "c6287221-9b2a-4e49-b87c-884ce622459f",
+            "blackPlayerId": "03a44baf-3792-4787-871a-70be2a8f032c",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 1,
+            "whitePlayerId": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+            "blackPlayerId": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 1,
+            "whitePlayerId": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+            "blackPlayerId": "0c756588-42af-4c11-a154-a4a4b7574e04",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 1,
+            "whitePlayerId": "d614e289-cdb9-45d7-b283-a522ef596f34",
+            "blackPlayerId": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 1,
+            "whitePlayerId": "db802054-dafd-4f54-974c-b414159b457d",
+            "blackPlayerId": "80705225-e276-4296-8d5c-ba01cfca4abf",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 1,
+            "whitePlayerId": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+            "blackPlayerId": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+            "result": "1-0",
+            "isBye": false
+          }
+        ]
+      },
+      {
+        "roundNumber": 2,
+        "games": [
+          {
+            "roundNumber": 2,
+            "whitePlayerId": "03a44baf-3792-4787-871a-70be2a8f032c",
+            "blackPlayerId": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 2,
+            "whitePlayerId": "80705225-e276-4296-8d5c-ba01cfca4abf",
+            "blackPlayerId": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 2,
+            "whitePlayerId": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+            "blackPlayerId": "db802054-dafd-4f54-974c-b414159b457d",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 2,
+            "whitePlayerId": "0c756588-42af-4c11-a154-a4a4b7574e04",
+            "blackPlayerId": "d614e289-cdb9-45d7-b283-a522ef596f34",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 2,
+            "whitePlayerId": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+            "blackPlayerId": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 2,
+            "whitePlayerId": "c6287221-9b2a-4e49-b87c-884ce622459f",
+            "blackPlayerId": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+            "result": "0-1",
+            "isBye": false
+          }
+        ]
+      },
+      {
+        "roundNumber": 3,
+        "games": [
+          {
+            "roundNumber": 3,
+            "whitePlayerId": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+            "blackPlayerId": "03a44baf-3792-4787-871a-70be2a8f032c",
+            "result": "0.5-0.5",
+            "isBye": false
+          },
+          {
+            "roundNumber": 3,
+            "whitePlayerId": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+            "blackPlayerId": "c6287221-9b2a-4e49-b87c-884ce622459f",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 3,
+            "whitePlayerId": "d614e289-cdb9-45d7-b283-a522ef596f34",
+            "blackPlayerId": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 3,
+            "whitePlayerId": "db802054-dafd-4f54-974c-b414159b457d",
+            "blackPlayerId": "0c756588-42af-4c11-a154-a4a4b7574e04",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 3,
+            "whitePlayerId": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+            "blackPlayerId": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 3,
+            "whitePlayerId": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+            "blackPlayerId": "80705225-e276-4296-8d5c-ba01cfca4abf",
+            "result": "0-1",
+            "isBye": false
+          }
+        ]
+      },
+      {
+        "roundNumber": 4,
+        "games": [
+          {
+            "roundNumber": 4,
+            "whitePlayerId": "03a44baf-3792-4787-871a-70be2a8f032c",
+            "blackPlayerId": "80705225-e276-4296-8d5c-ba01cfca4abf",
+            "result": "0.5-0.5",
+            "isBye": false
+          },
+          {
+            "roundNumber": 4,
+            "whitePlayerId": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+            "blackPlayerId": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 4,
+            "whitePlayerId": "0c756588-42af-4c11-a154-a4a4b7574e04",
+            "blackPlayerId": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 4,
+            "whitePlayerId": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+            "blackPlayerId": "db802054-dafd-4f54-974c-b414159b457d",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 4,
+            "whitePlayerId": "c6287221-9b2a-4e49-b87c-884ce622459f",
+            "blackPlayerId": "d614e289-cdb9-45d7-b283-a522ef596f34",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 4,
+            "whitePlayerId": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+            "blackPlayerId": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+            "result": "1-0",
+            "isBye": false
+          }
+        ]
+      },
+      {
+        "roundNumber": 5,
+        "games": [
+          {
+            "roundNumber": 5,
+            "whitePlayerId": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+            "blackPlayerId": "03a44baf-3792-4787-871a-70be2a8f032c",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 5,
+            "whitePlayerId": "d614e289-cdb9-45d7-b283-a522ef596f34",
+            "blackPlayerId": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 5,
+            "whitePlayerId": "db802054-dafd-4f54-974c-b414159b457d",
+            "blackPlayerId": "c6287221-9b2a-4e49-b87c-884ce622459f",
+            "result": "0.5-0.5",
+            "isBye": false
+          },
+          {
+            "roundNumber": 5,
+            "whitePlayerId": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+            "blackPlayerId": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 5,
+            "whitePlayerId": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+            "blackPlayerId": "0c756588-42af-4c11-a154-a4a4b7574e04",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 5,
+            "whitePlayerId": "80705225-e276-4296-8d5c-ba01cfca4abf",
+            "blackPlayerId": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+            "result": "0-1",
+            "isBye": false
+          }
+        ]
+      },
+      {
+        "roundNumber": 6,
+        "games": [
+          {
+            "roundNumber": 6,
+            "whitePlayerId": "03a44baf-3792-4787-871a-70be2a8f032c",
+            "blackPlayerId": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+            "result": "0.5-0.5",
+            "isBye": false
+          },
+          {
+            "roundNumber": 6,
+            "whitePlayerId": "0c756588-42af-4c11-a154-a4a4b7574e04",
+            "blackPlayerId": "80705225-e276-4296-8d5c-ba01cfca4abf",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 6,
+            "whitePlayerId": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+            "blackPlayerId": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+            "result": "0.5-0.5",
+            "isBye": false
+          },
+          {
+            "roundNumber": 6,
+            "whitePlayerId": "c6287221-9b2a-4e49-b87c-884ce622459f",
+            "blackPlayerId": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 6,
+            "whitePlayerId": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+            "blackPlayerId": "db802054-dafd-4f54-974c-b414159b457d",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 6,
+            "whitePlayerId": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+            "blackPlayerId": "d614e289-cdb9-45d7-b283-a522ef596f34",
+            "result": "1-0",
+            "isBye": false
+          }
+        ]
+      },
+      {
+        "roundNumber": 7,
+        "games": [
+          {
+            "roundNumber": 7,
+            "whitePlayerId": "d614e289-cdb9-45d7-b283-a522ef596f34",
+            "blackPlayerId": "03a44baf-3792-4787-871a-70be2a8f032c",
+            "result": "0.5-0.5",
+            "isBye": false
+          },
+          {
+            "roundNumber": 7,
+            "whitePlayerId": "db802054-dafd-4f54-974c-b414159b457d",
+            "blackPlayerId": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 7,
+            "whitePlayerId": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+            "blackPlayerId": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+            "result": "0.5-0.5",
+            "isBye": false
+          },
+          {
+            "roundNumber": 7,
+            "whitePlayerId": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+            "blackPlayerId": "c6287221-9b2a-4e49-b87c-884ce622459f",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 7,
+            "whitePlayerId": "80705225-e276-4296-8d5c-ba01cfca4abf",
+            "blackPlayerId": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 7,
+            "whitePlayerId": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+            "blackPlayerId": "0c756588-42af-4c11-a154-a4a4b7574e04",
+            "result": "0-1",
+            "isBye": false
+          }
+        ]
+      },
+      {
+        "roundNumber": 8,
+        "games": [
+          {
+            "roundNumber": 8,
+            "whitePlayerId": "03a44baf-3792-4787-871a-70be2a8f032c",
+            "blackPlayerId": "0c756588-42af-4c11-a154-a4a4b7574e04",
+            "result": "0.5-0.5",
+            "isBye": false
+          },
+          {
+            "roundNumber": 8,
+            "whitePlayerId": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+            "blackPlayerId": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 8,
+            "whitePlayerId": "c6287221-9b2a-4e49-b87c-884ce622459f",
+            "blackPlayerId": "80705225-e276-4296-8d5c-ba01cfca4abf",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 8,
+            "whitePlayerId": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+            "blackPlayerId": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 8,
+            "whitePlayerId": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+            "blackPlayerId": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 8,
+            "whitePlayerId": "d614e289-cdb9-45d7-b283-a522ef596f34",
+            "blackPlayerId": "db802054-dafd-4f54-974c-b414159b457d",
+            "result": "0-1",
+            "isBye": false
+          }
+        ]
+      },
+      {
+        "roundNumber": 9,
+        "games": [
+          {
+            "roundNumber": 9,
+            "whitePlayerId": "db802054-dafd-4f54-974c-b414159b457d",
+            "blackPlayerId": "03a44baf-3792-4787-871a-70be2a8f032c",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 9,
+            "whitePlayerId": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+            "blackPlayerId": "d614e289-cdb9-45d7-b283-a522ef596f34",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 9,
+            "whitePlayerId": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+            "blackPlayerId": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 9,
+            "whitePlayerId": "80705225-e276-4296-8d5c-ba01cfca4abf",
+            "blackPlayerId": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 9,
+            "whitePlayerId": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+            "blackPlayerId": "c6287221-9b2a-4e49-b87c-884ce622459f",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 9,
+            "whitePlayerId": "0c756588-42af-4c11-a154-a4a4b7574e04",
+            "blackPlayerId": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+            "result": "0-1",
+            "isBye": false
+          }
+        ]
+      },
+      {
+        "roundNumber": 10,
+        "games": [
+          {
+            "roundNumber": 10,
+            "whitePlayerId": "03a44baf-3792-4787-871a-70be2a8f032c",
+            "blackPlayerId": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 10,
+            "whitePlayerId": "c6287221-9b2a-4e49-b87c-884ce622459f",
+            "blackPlayerId": "0c756588-42af-4c11-a154-a4a4b7574e04",
+            "result": "0.5-0.5",
+            "isBye": false
+          },
+          {
+            "roundNumber": 10,
+            "whitePlayerId": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+            "blackPlayerId": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 10,
+            "whitePlayerId": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+            "blackPlayerId": "80705225-e276-4296-8d5c-ba01cfca4abf",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 10,
+            "whitePlayerId": "d614e289-cdb9-45d7-b283-a522ef596f34",
+            "blackPlayerId": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 10,
+            "whitePlayerId": "db802054-dafd-4f54-974c-b414159b457d",
+            "blackPlayerId": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+            "result": "1-0",
+            "isBye": false
+          }
+        ]
+      },
+      {
+        "roundNumber": 11,
+        "games": [
+          {
+            "roundNumber": 11,
+            "whitePlayerId": "b4318b1c-1e19-4ce3-b162-8b91794aebf6",
+            "blackPlayerId": "03a44baf-3792-4787-871a-70be2a8f032c",
+            "result": "0.5-0.5",
+            "isBye": false
+          },
+          {
+            "roundNumber": 11,
+            "whitePlayerId": "62341a0b-7b46-4779-bfd5-89a2db2631a4",
+            "blackPlayerId": "db802054-dafd-4f54-974c-b414159b457d",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 11,
+            "whitePlayerId": "80705225-e276-4296-8d5c-ba01cfca4abf",
+            "blackPlayerId": "d614e289-cdb9-45d7-b283-a522ef596f34",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 11,
+            "whitePlayerId": "dd63c6cd-1094-49ee-90da-460638dda1c4",
+            "blackPlayerId": "bb78129d-f17d-4e61-8ba3-e78dfa3d9bce",
+            "result": "1-0",
+            "isBye": false
+          },
+          {
+            "roundNumber": 11,
+            "whitePlayerId": "0c756588-42af-4c11-a154-a4a4b7574e04",
+            "blackPlayerId": "f38edca9-1650-4f74-ac5f-caf0b701500e",
+            "result": "0-1",
+            "isBye": false
+          },
+          {
+            "roundNumber": 11,
+            "whitePlayerId": "0922ed07-ce28-4a02-b4ae-db117b59d38c",
+            "blackPlayerId": "c6287221-9b2a-4e49-b87c-884ce622459f",
+            "result": "1-0",
+            "isBye": false
+          }
+        ]
+      }
+    ],
+    "tiebreaksConfig": {
+      "type": "berger"
+    },
+    "createdAt": "2026-02-07T16:10:24.730Z",
+    "updatedAt": "2026-02-07T18:12:49.002Z",
+    "chiefJudge": "Лобанов А.Г."
+  }
+}
