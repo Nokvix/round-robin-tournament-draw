@@ -181,6 +181,12 @@ export default function App() {
   }, [tournament]);
 
   useEffect(() => {
+    if (!tournament) return;
+    if (tournament.chiefJudge === chiefJudge) return;
+    setTournament({ ...tournament, chiefJudge, updatedAt: new Date().toISOString() });
+  }, [chiefJudge, tournament]);
+
+  useEffect(() => {
     if (printMode === "none") {
       document.body.removeAttribute("data-print-mode");
       const existing = document.getElementById("print-page-style");
