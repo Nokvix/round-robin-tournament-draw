@@ -146,7 +146,8 @@ export default function App() {
     if (!tournament) return new Map<string, string>();
     const map = new Map<string, string>();
     standings.forEach((row) => {
-      map.set(row.playerId, placeOverrides[row.playerId] ?? String(row.place));
+      const defaultPlace = row.place > 0 ? String(row.place) : "";
+      map.set(row.playerId, placeOverrides[row.playerId] ?? defaultPlace);
     });
     return map;
   }, [standings, placeOverrides, tournament]);
