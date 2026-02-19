@@ -188,6 +188,12 @@ export default function App() {
   }, [chiefJudge, tournament]);
 
   useEffect(() => {
+    if (!tournament) return;
+    if (tournament.date === date) return;
+    setTournament({ ...tournament, date, updatedAt: new Date().toISOString() });
+  }, [date, tournament]);
+
+  useEffect(() => {
     if (printMode === "none") {
       document.body.removeAttribute("data-print-mode");
       const existing = document.getElementById("print-page-style");
