@@ -338,6 +338,7 @@ export default function App() {
               onChange={(event) => setParticipantsText(event.target.value)}
               multiline
               minRows={4}
+              helperText="Ввод участников через запятую или через перенос строки (Enter)."
             />
             {parsed.duplicates.length > 0 && (
               <Alert severity="warning">Дубли имен: {parsed.duplicates.join(", ")}</Alert>
