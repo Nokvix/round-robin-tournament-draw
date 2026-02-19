@@ -35,7 +35,7 @@ function getPairParts(
 export default function RoundsList({ rounds, playersById, className }: RoundsListProps) {
   return (
     <Box className={className}>
-      <Typography variant="h6" className="no-print" mb={1}>
+      <Typography variant="h6" className="no-print rounds-heading" mb={1}>
         Пары по турам
       </Typography>
       <Box className="rounds-list">

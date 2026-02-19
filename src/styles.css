@@ -234,6 +234,58 @@ body[data-print-preview="rounds"] .print-rounds-only {
   gap: 20px;
 }
 
+.rounds-heading {
+  text-align: center;
+}
+
+.rounds-date {
+  text-align: right;
+}
+
+.rounds-block {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.rounds-item {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  line-height: 1.25;
+  display: grid !important;
+  grid-template-columns: 1fr auto 1fr;
+  column-gap: 16px;
+  align-items: baseline;
+  width: 100%;
+}
+
+.rounds-left {
+  text-align: right;
+}
+
+.rounds-hyphen {
+  text-align: center;
+}
+
+.rounds-right {
+  text-align: left;
+}
+
+.rounds-title-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.rounds-title {
+  text-align: center;
+}
+
+.rounds-title-spacer {
+  height: 1px;
+}
+
 .rounds-divider {
   margin: 16px 0;
+  height: 1px;
 }
