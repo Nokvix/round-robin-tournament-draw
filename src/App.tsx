@@ -188,6 +188,12 @@ export default function App() {
   }, [chiefJudge, tournament]);
 
   useEffect(() => {
+    if (!tournament) return;
+    if (tournament.date === date) return;
+    setTournament({ ...tournament, date, updatedAt: new Date().toISOString() });
+  }, [date, tournament]);
+
+  useEffect(() => {
     if (printMode === "none") {
       document.body.removeAttribute("data-print-mode");
       const existing = document.getElementById("print-page-style");
@@ -338,6 +344,7 @@ export default function App() {
               onChange={(event) => setParticipantsText(event.target.value)}
               multiline
               minRows={4}
+              helperText="Ввод участников через запятую или через перенос строки (Enter)."
             />
             {parsed.duplicates.length > 0 && (
               <Alert severity="warning">Дубли имен: {parsed.duplicates.join(", ")}</Alert>
