@@ -118,8 +118,8 @@ export default function ResultsTable({
                       </TableCell>
                     );
                   })}
-                  <TableCell align="center">{row ? formatScore(row.points) : ""}</TableCell>
-                  <TableCell align="center">{row ? formatTiebreak(row.tiebreak1) : ""}</TableCell>
+                  <TableCell align="center">{row && row.place > 0 ? formatScore(row.points) : ""}</TableCell>
+                  <TableCell align="center">{row && row.place > 0 ? formatTiebreak(row.tiebreak1) : ""}</TableCell>
                   <TableCell align="center">
                     <TextField
                       size="small"

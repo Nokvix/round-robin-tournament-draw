@@ -100,8 +100,8 @@ export default function PrintableBergerTable({
                     });
                     return <td key={opponentIndex}>{formatCell(game, player.id)}</td>;
                   })}
-                  <td>{row ? formatScore(row.points) : ""}</td>
-                  <td>{row ? formatTiebreak(row.tiebreak1) : ""}</td>
+                  <td>{row && row.place > 0 ? formatScore(row.points) : ""}</td>
+                  <td>{row && row.place > 0 ? formatTiebreak(row.tiebreak1) : ""}</td>
                   <td>{placeValues?.get(player.id) ?? row?.place ?? ""}</td>
                 </tr>
               );
