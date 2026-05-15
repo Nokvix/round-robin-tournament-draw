@@ -164,7 +164,7 @@ body[data-print-preview="rounds"] .print-rounds-only {
   }
 
   .print-table-wrapper {
-    width: var(--print-table-width);
+    width: calc(var(--print-table-width) + var(--print-border-guard));
     height: var(--print-table-height);
     overflow: visible;
   }
@@ -173,6 +173,8 @@ body[data-print-preview="rounds"] .print-rounds-only {
     width: var(--print-table-width);
     height: var(--print-table-height);
     border-collapse: collapse;
+    outline: 1px solid #000;
+    outline-offset: -1px;
     table-layout: fixed;
   }
 

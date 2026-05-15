@@ -39,6 +39,7 @@ const PRINT_FOOTER_HEIGHT_MM = 7;
 const PRINT_VERTICAL_GAP_MM = 3;
 const PRINT_FONT_SIZE_PT = 12;
 const PRINT_CELL_PADDING_X_MM = 1.5;
+const PRINT_BORDER_GUARD_MM = 1;
 
 function getPrintLayout(playersCount: number) {
   const squareColumnsCount = playersCount + 1;
@@ -47,7 +48,7 @@ function getPrintLayout(playersCount: number) {
     PRINT_PLAYER_COLUMN_WIDTH_MM +
     PRINT_PLACE_COLUMN_WIDTH_MM * 3;
   const tableHeight = (playersCount + 1) * PRINT_SQUARE_SIZE_MM;
-  const formWidth = tableWidth;
+  const formWidth = tableWidth + PRINT_BORDER_GUARD_MM;
   const formHeight =
     PRINT_HEADER_HEIGHT_MM +
     PRINT_VERTICAL_GAP_MM +
@@ -69,6 +70,7 @@ function getPrintLayout(playersCount: number) {
     tableHeight: tableHeight * scale,
     formWidth: formWidth * scale,
     formHeight: formHeight * scale,
+    borderGuard: PRINT_BORDER_GUARD_MM * scale,
     headerHeight: PRINT_HEADER_HEIGHT_MM * scale,
     footerHeight: PRINT_FOOTER_HEIGHT_MM * scale,
     verticalGap: PRINT_VERTICAL_GAP_MM * scale,
@@ -106,6 +108,7 @@ export default function PrintableBergerTable({
           "--print-table-height": `${layout.tableHeight}mm`,
           "--print-form-width": `${layout.formWidth}mm`,
           "--print-form-height": `${layout.formHeight}mm`,
+          "--print-border-guard": `${layout.borderGuard}mm`,
           "--print-header-height": `${layout.headerHeight}mm`,
           "--print-footer-height": `${layout.footerHeight}mm`,
           "--print-vertical-gap": `${layout.verticalGap}mm`,
