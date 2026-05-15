@@ -109,6 +109,16 @@ body[data-print-preview="rounds"] .print-rounds-only {
     display: none !important;
   }
 
+  body[data-print-mode="table"] .app-shell {
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  body[data-print-mode="table"] .MuiContainer-root {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
   .print-table,
   .print-rounds {
     box-shadow: none !important;
@@ -117,19 +127,51 @@ body[data-print-preview="rounds"] .print-rounds-only {
 
   .print-berger {
     color: #000;
-    font-size: 12pt;
+    font-size: var(--print-font-size);
+    width: var(--print-form-width);
+    height: var(--print-form-height);
+    overflow: hidden;
+    break-inside: avoid;
+    page-break-inside: avoid;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
+  .print-berger-page {
+    width: var(--print-form-width);
+    height: var(--print-form-height);
+  }
+
+  .print-berger .MuiTypography-root {
+    font-size: inherit;
+    line-height: 1.1;
+  }
+
+  .print-berger-header .MuiTypography-h6 {
+    font-size: calc(var(--print-font-size) * 1.15);
+  }
+
+  .print-berger-header {
+    height: var(--print-header-height);
+    margin-bottom: var(--print-vertical-gap);
+    overflow: hidden;
+  }
+
+  .print-berger-footer {
+    height: var(--print-footer-height);
+    margin-top: var(--print-vertical-gap);
+    overflow: hidden;
+  }
+
   .print-table-wrapper {
-    transform: scale(var(--print-scale, 1));
-    transform-origin: top left;
-    width: calc(100% / var(--print-scale, 1));
+    width: var(--print-table-width);
+    height: var(--print-table-height);
+    overflow: visible;
   }
 
   .print-table-grid {
-    width: max-content;
+    width: var(--print-table-width);
+    height: var(--print-table-height);
     border-collapse: collapse;
     table-layout: fixed;
   }
@@ -150,7 +192,7 @@ body[data-print-preview="rounds"] .print-rounds-only {
   .print-table-grid td {
     border: 1px solid #000;
     box-sizing: border-box;
-    padding: 0 1.5mm;
+    padding: 0 var(--print-cell-padding-x);
     text-align: center;
     vertical-align: middle;
     font-weight: 400;
