@@ -173,8 +173,7 @@ body[data-print-preview="rounds"] .print-rounds-only {
   }
 
   .print-table-grid .cell-result,
-  .print-table-grid .cell-round-number,
-  .print-table-grid .cell-summary {
+  .print-table-grid .cell-round-number {
     font-weight: 600;
   }
 

@@ -35,11 +35,11 @@ const PRINT_PLACE_COLUMN_WIDTH_MM = 18;
 const PRINT_PAGE_CONTENT_WIDTH_MM = 277;
 
 function getPrintScale(playersCount: number): number {
-  const squareColumnsCount = playersCount + 3;
+  const squareColumnsCount = playersCount + 1;
   const tableWidth =
     squareColumnsCount * PRINT_SQUARE_SIZE_MM +
     PRINT_PLAYER_COLUMN_WIDTH_MM +
-    PRINT_PLACE_COLUMN_WIDTH_MM;
+    PRINT_PLACE_COLUMN_WIDTH_MM * 3;
 
   return Math.min(1, PRINT_PAGE_CONTENT_WIDTH_MM / tableWidth);
 }
@@ -88,8 +88,8 @@ export default function PrintableBergerTable({
             {players.map((player) => (
               <col key={player.id} className="print-col-square" />
             ))}
-            <col className="print-col-square" />
-            <col className="print-col-square" />
+            <col className="print-col-place" />
+            <col className="print-col-place" />
             <col className="print-col-place" />
           </colgroup>
           <thead>
@@ -101,8 +101,8 @@ export default function PrintableBergerTable({
                   {index + 1}
                 </th>
               ))}
-              <th className="cell-square cell-summary">Очки</th>
-              <th className="cell-square cell-summary">Доп</th>
+              <th>Очки</th>
+              <th>Доп</th>
               <th>Место</th>
             </tr>
           </thead>
@@ -133,8 +133,8 @@ export default function PrintableBergerTable({
                       </td>
                     );
                   })}
-                  <td className="cell-square cell-summary">{row && row.place > 0 ? formatScore(row.points) : ""}</td>
-                  <td className="cell-square cell-summary">{row && row.place > 0 ? formatTiebreak(row.tiebreak1) : ""}</td>
+                  <td>{row && row.place > 0 ? formatScore(row.points) : ""}</td>
+                  <td>{row && row.place > 0 ? formatTiebreak(row.tiebreak1) : ""}</td>
                   <td>{placeValues?.get(player.id) ?? row?.place ?? ""}</td>
                 </tr>
               );
