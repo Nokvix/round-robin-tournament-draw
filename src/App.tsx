@@ -18,6 +18,7 @@ import RoundsList from "./components/RoundsList";
 import ResultDialog from "./components/ResultDialog";
 import PrintableBergerTable from "./components/PrintableBergerTable";
 import PrintableRoundsList from "./components/PrintableRoundsList";
+import RatingCalculator from "./components/RatingCalculator";
 import { Game, Player, Tournament } from "./types";
 import { generateRoundRobin } from "./utils/roundRobin";
 import { computeStandings } from "./utils/standings";
@@ -26,6 +27,12 @@ import { parseTournament, serializeTournament } from "./utils/importExport";
 
 const MAX_NAME_LENGTH = 50;
 const WARN_AFTER = 32;
+
+type ServiceMode = "draw" | "rating";
+
+function getInitialServiceMode(): ServiceMode {
+  return window.location.hash === "#rating" ? "rating" : "draw";
+}
 
 function createId(): string {
   if ("randomUUID" in crypto) {
@@ -76,6 +83,7 @@ function shuffleArray<T>(items: T[]): T[] {
 
 export default function App() {
   const stored = useMemo(() => loadLastTournament(), []);
+  const [serviceMode, setServiceMode] = useState<ServiceMode>(() => getInitialServiceMode());
   const [tournament, setTournament] = useState<Tournament | null>(stored);
   const [name, setName] = useState(stored?.name ?? "");
   const [date, setDate] = useState(stored?.date ?? defaultDate());
@@ -223,6 +231,17 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    const handleHashChange = () => setServiceMode(getInitialServiceMode());
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const handleServiceModeChange = (mode: ServiceMode) => {
+    setServiceMode(mode);
+    window.location.hash = mode === "rating" ? "rating" : "draw";
+  };
+
   const disableGenerate = parsed.names.length < 2 || parsed.duplicates.length > 0 || parsed.tooLong.length > 0;
 
   const handleGenerate = () => {
@@ -307,174 +326,197 @@ export default function App() {
   return (
     <Box className="app-shell">
       <Container maxWidth="xl" sx={{ py: 4 }}>
-        <Typography variant="h4" fontWeight={600} gutterBottom className="no-print">
-          Жеребьёвка турниров по круговой системе
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" className="no-print">
-          Быстро создайте турнир, сгенерируйте пары и распечатайте ведомость.
-        </Typography>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1} className="service-nav no-print">
+          <Button
+            variant={serviceMode === "draw" ? "contained" : "outlined"}
+            onClick={() => handleServiceModeChange("draw")}
+          >
+            Жеребьёвка
+          </Button>
+          <Button
+            variant={serviceMode === "rating" ? "contained" : "outlined"}
+            onClick={() => handleServiceModeChange("rating")}
+          >
+            Обсчёт рейтинга
+          </Button>
+        </Stack>
 
-        <Paper className="section no-print" sx={{ p: 3 }}>
-          <Stack spacing={2}>
-            <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-              <TextField
-                label="Название турнира"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                fullWidth
-              />
-              <TextField
-                label="Дата турнира"
-                type="date"
-                value={date}
-                onChange={(event) => setDate(event.target.value)}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Stack>
-            <TextField
-              label="Главный судья"
-              value={chiefJudge}
-              onChange={(event) => setChiefJudge(event.target.value)}
-              fullWidth
-            />
-            <TextField
-              label="Участники"
-              placeholder="Введите имена через запятую или с новой строки"
-              value={participantsText}
-              onChange={(event) => setParticipantsText(event.target.value)}
-              multiline
-              minRows={4}
-              helperText="Ввод участников через запятую или через перенос строки (Enter)."
-            />
-            {parsed.duplicates.length > 0 && (
-              <Alert severity="warning">Дубли имен: {parsed.duplicates.join(", ")}</Alert>
-            )}
-            {parsed.tooLong.length > 0 && (
-              <Alert severity="warning">Слишком длинные имена: {parsed.tooLong.join(", ")}</Alert>
-            )}
-            {parsed.names.length > WARN_AFTER && (
-              <Alert severity="info">Участников больше {WARN_AFTER}. Таблица будет широкой.</Alert>
-            )}
-            <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="center">
-              <Button variant="contained" onClick={handleGenerate} disabled={disableGenerate}>
-                Составить жеребьёвку
-              </Button>
-              <Button variant="outlined" onClick={handleReset}>
-                Сбросить
-              </Button>
-              <Button variant="text" onClick={(event) => setMenuAnchor(event.currentTarget)}>
-                Сохранить / Загрузить
-              </Button>
-              <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={() => setMenuAnchor(null)}>
-                <MenuItem onClick={handleExport}>Сохранить JSON</MenuItem>
-                <MenuItem component="label">
-                  Загрузить JSON
-                  <input
-                    hidden
-                    type="file"
-                    accept="application/json"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (file) {
-                        handleImport(file);
-                      }
-                    }}
-                  />
-                </MenuItem>
-              </Menu>
-            </Stack>
-            <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="center">
-              <Button variant={shufflePlayers ? "contained" : "outlined"} onClick={() => setShufflePlayers((prev) => !prev)}>
-                {shufflePlayers ? "Случайное перемешивание включено" : "Случайное перемешивание выключено"}
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  const url = new URL(window.location.href);
-                  url.searchParams.set("print", "rounds");
-                  window.open(url.toString(), "_blank", "noopener");
-                }}
-                disabled={!tournament}
-              >
-                Открыть пары на туры
-              </Button>
-            </Stack>
-          </Stack>
-        </Paper>
-
-        {tournament ? (
-          <>
-            <Paper className="section print-table" sx={{ p: 3 }}>
-              <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="center" className="no-print">
-                <Button variant="outlined" onClick={() => setPrintMode("table")}>
-                  Печатать таблицу
-                </Button>
-                <Button variant="outlined" onClick={() => setPrintMode("rounds")}>
-                  Печать пар туров
-                </Button>
-              </Stack>
-              <Divider sx={{ my: 2 }} />
-              <ResultsTable
-                tournament={tournament}
-                standings={standings}
-                gamesByPlayerOpponent={gamesByPlayerOpponent}
-                playersById={playersById}
-                onCellClick={(game, playerId) => {
-                  setDialogGame({ ...game });
-                  setDialogPlayerId(playerId);
-                }}
-                placeValues={placeValues}
-                onPlaceChange={(playerId, value) =>
-                  setPlaceOverrides((prev) => ({ ...prev, [playerId]: value }))
-                }
-              />
-              {duplicatePlaces.length > 0 && (
-                <Alert severity="warning" sx={{ mt: 2 }}>
-                  В столбце «Место» есть одинаковые значения: {duplicatePlaces.join(", ")}.
-                </Alert>
-              )}
-            </Paper>
-
-            <PrintableBergerTable
-              tournament={tournament}
-              standings={standings}
-              gamesByPlayerRound={gamesByPlayerRound}
-              placeValues={placeValues}
-            />
-
-            <PrintableRoundsList
-              rounds={tournament.rounds}
-              playersById={playersById}
-              title={tournament.name}
-              date={tournament.date}
-            />
-
-            <Paper className="section print-rounds" sx={{ p: 3 }}>
-              <RoundsList rounds={tournament.rounds} playersById={playersById} />
-            </Paper>
-          </>
+        {serviceMode === "rating" ? (
+          <RatingCalculator />
         ) : (
-          <Paper className="section" sx={{ p: 3 }}>
-            <Typography color="text.secondary">Пока нет созданного турнира.</Typography>
-          </Paper>
+          <>
+            <Typography variant="h4" fontWeight={600} gutterBottom className="no-print">
+              Жеребьёвка турниров по круговой системе
+            </Typography>
+            <Typography variant="subtitle1" color="text.secondary" className="no-print">
+              Быстро создайте турнир, сгенерируйте пары и распечатайте ведомость.
+            </Typography>
+
+            <Paper className="section no-print" sx={{ p: 3 }}>
+              <Stack spacing={2}>
+                <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+                  <TextField
+                    label="Название турнира"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    fullWidth
+                  />
+                  <TextField
+                    label="Дата турнира"
+                    type="date"
+                    value={date}
+                    onChange={(event) => setDate(event.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Stack>
+                <TextField
+                  label="Главный судья"
+                  value={chiefJudge}
+                  onChange={(event) => setChiefJudge(event.target.value)}
+                  fullWidth
+                />
+                <TextField
+                  label="Участники"
+                  placeholder="Введите имена через запятую или с новой строки"
+                  value={participantsText}
+                  onChange={(event) => setParticipantsText(event.target.value)}
+                  multiline
+                  minRows={4}
+                  helperText="Ввод участников через запятую или через перенос строки (Enter)."
+                />
+                {parsed.duplicates.length > 0 && (
+                  <Alert severity="warning">Дубли имен: {parsed.duplicates.join(", ")}</Alert>
+                )}
+                {parsed.tooLong.length > 0 && (
+                  <Alert severity="warning">Слишком длинные имена: {parsed.tooLong.join(", ")}</Alert>
+                )}
+                {parsed.names.length > WARN_AFTER && (
+                  <Alert severity="info">Участников больше {WARN_AFTER}. Таблица будет широкой.</Alert>
+                )}
+                <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="center">
+                  <Button variant="contained" onClick={handleGenerate} disabled={disableGenerate}>
+                    Составить жеребьёвку
+                  </Button>
+                  <Button variant="outlined" onClick={handleReset}>
+                    Сбросить
+                  </Button>
+                  <Button variant="text" onClick={(event) => setMenuAnchor(event.currentTarget)}>
+                    Сохранить / Загрузить
+                  </Button>
+                  <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={() => setMenuAnchor(null)}>
+                    <MenuItem onClick={handleExport}>Сохранить JSON</MenuItem>
+                    <MenuItem component="label">
+                      Загрузить JSON
+                      <input
+                        hidden
+                        type="file"
+                        accept="application/json"
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          if (file) {
+                            handleImport(file);
+                          }
+                        }}
+                      />
+                    </MenuItem>
+                  </Menu>
+                </Stack>
+                <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="center">
+                  <Button variant={shufflePlayers ? "contained" : "outlined"} onClick={() => setShufflePlayers((prev) => !prev)}>
+                    {shufflePlayers ? "Случайное перемешивание включено" : "Случайное перемешивание выключено"}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      const url = new URL(window.location.href);
+                      url.searchParams.set("print", "rounds");
+                      window.open(url.toString(), "_blank", "noopener");
+                    }}
+                    disabled={!tournament}
+                  >
+                    Открыть пары на туры
+                  </Button>
+                </Stack>
+              </Stack>
+            </Paper>
+
+            {tournament ? (
+              <>
+                <Paper className="section print-table" sx={{ p: 3 }}>
+                  <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="center" className="no-print">
+                    <Button variant="outlined" onClick={() => setPrintMode("table")}>
+                      Печатать таблицу
+                    </Button>
+                    <Button variant="outlined" onClick={() => setPrintMode("rounds")}>
+                      Печать пар туров
+                    </Button>
+                  </Stack>
+                  <Divider sx={{ my: 2 }} />
+                  <ResultsTable
+                    tournament={tournament}
+                    standings={standings}
+                    gamesByPlayerOpponent={gamesByPlayerOpponent}
+                    playersById={playersById}
+                    onCellClick={(game, playerId) => {
+                      setDialogGame({ ...game });
+                      setDialogPlayerId(playerId);
+                    }}
+                    placeValues={placeValues}
+                    onPlaceChange={(playerId, value) =>
+                      setPlaceOverrides((prev) => ({ ...prev, [playerId]: value }))
+                    }
+                  />
+                  {duplicatePlaces.length > 0 && (
+                    <Alert severity="warning" sx={{ mt: 2 }}>
+                      В столбце «Место» есть одинаковые значения: {duplicatePlaces.join(", ")}.
+                    </Alert>
+                  )}
+                </Paper>
+
+                <PrintableBergerTable
+                  tournament={tournament}
+                  standings={standings}
+                  gamesByPlayerRound={gamesByPlayerRound}
+                  placeValues={placeValues}
+                />
+
+                <PrintableRoundsList
+                  rounds={tournament.rounds}
+                  playersById={playersById}
+                  title={tournament.name}
+                  date={tournament.date}
+                />
+
+                <Paper className="section print-rounds" sx={{ p: 3 }}>
+                  <RoundsList rounds={tournament.rounds} playersById={playersById} />
+                </Paper>
+              </>
+            ) : (
+              <Paper className="section" sx={{ p: 3 }}>
+                <Typography color="text.secondary">Пока нет созданного турнира.</Typography>
+              </Paper>
+            )}
+          </>
         )}
       </Container>
 
-      <ResultDialog
-        open={Boolean(activeGame)}
-        game={activeGame}
-        playersById={playersById}
-        viewPlayerId={dialogPlayerId}
-        onClose={() => {
-          setDialogGame(null);
-          setDialogPlayerId(null);
-        }}
-        onSave={(result) => {
-          if (activeGame) {
-            handleResultChange(activeGame, result);
-          }
-        }}
-      />
+      {serviceMode === "draw" && (
+        <ResultDialog
+          open={Boolean(activeGame)}
+          game={activeGame}
+          playersById={playersById}
+          viewPlayerId={dialogPlayerId}
+          onClose={() => {
+            setDialogGame(null);
+            setDialogPlayerId(null);
+          }}
+          onSave={(result) => {
+            if (activeGame) {
+              handleResultChange(activeGame, result);
+            }
+          }}
+        />
+      )}
 
       <Snackbar
         open={Boolean(message)}
