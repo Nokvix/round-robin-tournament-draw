@@ -29,11 +29,19 @@ function formatCell(game: Game | undefined, playerId: string): string {
   return formatResult(game, playerId);
 }
 
+const PRINT_SQUARE_SIZE_MM = 10;
+const PRINT_PLAYER_COLUMN_WIDTH_MM = 58;
+const PRINT_PLACE_COLUMN_WIDTH_MM = 18;
+const PRINT_PAGE_CONTENT_WIDTH_MM = 277;
+
 function getPrintScale(playersCount: number): number {
-  if (playersCount <= 9) return 1;
-  if (playersCount <= 11) return 0.92;
-  if (playersCount <= 13) return 0.85;
-  return 0.78;
+  const squareColumnsCount = playersCount + 3;
+  const tableWidth =
+    squareColumnsCount * PRINT_SQUARE_SIZE_MM +
+    PRINT_PLAYER_COLUMN_WIDTH_MM +
+    PRINT_PLACE_COLUMN_WIDTH_MM;
+
+  return Math.min(1, PRINT_PAGE_CONTENT_WIDTH_MM / tableWidth);
 }
 
 function formatDateRu(dateValue: string): string {
@@ -49,13 +57,22 @@ export default function PrintableBergerTable({
   gamesByPlayerRound,
   placeValues
 }: PrintableBergerTableProps) {
-  const roundsCount = tournament.rounds.length;
   const standingsMap = new Map(standings.map((row) => [row.playerId, row]));
   const scale = getPrintScale(tournament.players.length);
   const players = tournament.players;
 
   return (
-    <Box className="print-berger print-only" sx={{ "--print-scale": scale } as React.CSSProperties}>
+    <Box
+      className="print-berger print-only"
+      sx={
+        {
+          "--print-scale": scale,
+          "--print-square-size": `${PRINT_SQUARE_SIZE_MM}mm`,
+          "--print-player-column-width": `${PRINT_PLAYER_COLUMN_WIDTH_MM}mm`,
+          "--print-place-column-width": `${PRINT_PLACE_COLUMN_WIDTH_MM}mm`
+        } as React.CSSProperties
+      }
+    >
       <Box mb={1} display="flex" justifyContent="space-between" alignItems="flex-start">
         <Typography variant="h6" fontWeight={600}>
           {tournament.name}
@@ -65,15 +82,27 @@ export default function PrintableBergerTable({
 
       <div className="print-table-wrapper">
         <table className="print-table-grid">
+          <colgroup>
+            <col className="print-col-square" />
+            <col className="print-col-player" />
+            {players.map((player) => (
+              <col key={player.id} className="print-col-square" />
+            ))}
+            <col className="print-col-square" />
+            <col className="print-col-square" />
+            <col className="print-col-place" />
+          </colgroup>
           <thead>
             <tr>
-              <th>№</th>
-              <th className="cell-left">Игрок</th>
+              <th className="cell-square">№</th>
+              <th className="cell-left cell-player-name">Игрок</th>
               {players.map((_, index) => (
-                <th key={index}>{index + 1}</th>
+                <th key={index} className="cell-square cell-round-number">
+                  {index + 1}
+                </th>
               ))}
-              <th>Очки</th>
-              <th>Доп</th>
+              <th className="cell-square cell-summary">Очки</th>
+              <th className="cell-square cell-summary">Доп</th>
               <th>Место</th>
             </tr>
           </thead>
@@ -82,11 +111,11 @@ export default function PrintableBergerTable({
               const row = standingsMap.get(player.id);
               return (
                 <tr key={player.id}>
-                  <td>{index + 1}</td>
-                  <td className="cell-left">{player.name}</td>
+                  <td className="cell-square cell-round-number">{index + 1}</td>
+                  <td className="cell-left cell-player-name">{player.name}</td>
                   {players.map((opponent, opponentIndex) => {
                     if (player.id === opponent.id) {
-                      return <td key={opponentIndex} className="cell-black"></td>;
+                      return <td key={opponentIndex} className="cell-square cell-result cell-black"></td>;
                     }
                     const roundsMap = gamesByPlayerRound.get(player.id);
                     let game: Game | undefined;
@@ -98,10 +127,14 @@ export default function PrintableBergerTable({
                         game = candidate;
                       }
                     });
-                    return <td key={opponentIndex}>{formatCell(game, player.id)}</td>;
+                    return (
+                      <td key={opponentIndex} className="cell-square cell-result">
+                        {formatCell(game, player.id)}
+                      </td>
+                    );
                   })}
-                  <td>{row && row.place > 0 ? formatScore(row.points) : ""}</td>
-                  <td>{row && row.place > 0 ? formatTiebreak(row.tiebreak1) : ""}</td>
+                  <td className="cell-square cell-summary">{row && row.place > 0 ? formatScore(row.points) : ""}</td>
+                  <td className="cell-square cell-summary">{row && row.place > 0 ? formatTiebreak(row.tiebreak1) : ""}</td>
                   <td>{placeValues?.get(player.id) ?? row?.place ?? ""}</td>
                 </tr>
               );
