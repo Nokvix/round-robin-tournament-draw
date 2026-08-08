@@ -75,6 +75,12 @@ function decimal(value: number) {
   return Number.isInteger(value) ? String(value) : value.toFixed(2);
 }
 
+function averageOpponentRating(player: PlayerRatingResult): string {
+  if (player.details.length === 0) return "";
+  const total = player.details.reduce((sum, game) => sum + game.opponentRating, 0);
+  return decimal(total / player.details.length);
+}
+
 /**
  * Формирует порядок строк для отображения итогов турнира.
  * Рейтинг не пересчитывается: используются только результаты из SWM-файла.
@@ -404,7 +410,7 @@ export default function RatingCalculator() {
                           <TableCell align="right">Стало</TableCell>
                           <TableCell align="right">Изм.</TableCell>
                           <TableCell align="right">K</TableCell>
-                          <TableCell align="right">ΣΔR</TableCell>
+                          <TableCell align="right">Ср. рейтинг соперников</TableCell>
                           <TableCell align="right">Партий</TableCell>
                         </TableRow>
                       </TableHead>
@@ -417,7 +423,7 @@ export default function RatingCalculator() {
                             <TableCell align="right">{player.newRating}</TableCell>
                             <TableCell align="right">{signed(player.change)}</TableCell>
                             <TableCell align="right">{player.coefficient}</TableCell>
-                            <TableCell align="right">{decimal(player.sumDelta)}</TableCell>
+                            <TableCell align="right">{averageOpponentRating(player)}</TableCell>
                             <TableCell align="right">{player.gamesCount}</TableCell>
                           </TableRow>
                         ))}
