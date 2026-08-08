@@ -32,6 +32,7 @@ import {
   processRatingFiles,
   PlayerRatingResult,
   RatingProcessingResult,
+  SwmGame,
   SwmTournament
 } from "../utils/ratingCalculator";
 
@@ -68,7 +69,7 @@ function updatedDatabaseFileName(sourceName: string) {
 }
 
 function signed(value: number) {
-  return value > 0 ? `+${value}` : String(value);
+  return value >= 0 ? `+${value}` : String(value);
 }
 
 function decimal(value: number) {
@@ -85,9 +86,22 @@ function averageOpponentRating(player: PlayerRatingResult): string {
   return String(Math.round(total / player.details.length));
 }
 
+function formatTournamentGame(game: SwmGame | undefined): string {
+  if (!game?.played || game.opponentNumber === null || game.color === null) return "—";
+  const color = game.color === "W" ? "б" : "ч";
+  const score = game.score === 0.5 ? "½" : String(game.score);
+  return `${game.opponentNumber}${color}${score}`;
+}
+
 interface TournamentDisplayRow {
   player: PlayerRatingResult;
   points: number | null;
+  games: SwmGame[];
+}
+
+interface TournamentDisplay {
+  roundCount: number;
+  rows: TournamentDisplayRow[];
 }
 
 /**
@@ -123,10 +137,16 @@ function orderPlayersByTournamentResult(
   const resultById = new Map(
     ranking
       .filter(({ player }) => player.fsrId)
-      .map(({ player }, index) => [player.fsrId, { order: index, points: player.totalScore }])
+      .map(({ player }, index) => [
+        player.fsrId,
+        { order: index, points: player.totalScore, games: player.games }
+      ])
   );
   const resultByName = new Map(
-    ranking.map(({ player }, index) => [player.name, { order: index, points: player.totalScore }])
+    ranking.map(({ player }, index) => [
+      player.name,
+      { order: index, points: player.totalScore, games: player.games }
+    ])
   );
 
   return updatedPlayers
@@ -135,11 +155,12 @@ function orderPlayersByTournamentResult(
       return {
         player,
         points: tournamentResult?.points ?? null,
+        games: tournamentResult?.games ?? [],
         order: tournamentResult?.order ?? Number.MAX_SAFE_INTEGER
       };
     })
     .sort((left, right) => left.order - right.order)
-    .map(({ player, points }) => ({ player, points }));
+    .map(({ player, points, games }) => ({ player, points, games }));
 }
 
 export default function RatingCalculator() {
@@ -169,9 +190,18 @@ export default function RatingCalculator() {
 
     return result.tournaments.map((tournament, index) => {
       const source = tournamentFiles[index];
-      if (!source) return tournament.updatedPlayers.map((player) => ({ player, points: null }));
+      if (!source) {
+        return {
+          roundCount: 0,
+          rows: tournament.updatedPlayers.map((player) => ({ player, points: null, games: [] }))
+        } satisfies TournamentDisplay;
+      }
 
-      return orderPlayersByTournamentResult(tournament.updatedPlayers, parseSwmTournament(source.text));
+      const parsedTournament = parseSwmTournament(source.text);
+      return {
+        roundCount: parsedTournament.roundCount,
+        rows: orderPlayersByTournamentResult(tournament.updatedPlayers, parsedTournament)
+      } satisfies TournamentDisplay;
     });
   }, [result, tournamentFiles]);
 
@@ -407,7 +437,12 @@ export default function RatingCalculator() {
           </Paper>
 
           <Box className="section">
-            {result.tournaments.map((tournament, index) => (
+            {result.tournaments.map((tournament, index) => {
+              const tournamentDisplay = tournamentsForDisplay[index];
+              const displayRows = tournamentDisplay?.rows ?? [];
+              const roundCount = tournamentDisplay?.roundCount ?? 0;
+
+              return (
               <Accordion key={`${tournament.fileName}-${index}`} disableGutters>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ width: "100%" }}>
@@ -420,30 +455,44 @@ export default function RatingCalculator() {
                 </AccordionSummary>
                 <AccordionDetails>
                   <TableContainer>
-                    <Table size="small">
+                    <Table size="small" sx={{ minWidth: 1000 }}>
                       <TableHead>
                         <TableRow>
-                          <TableCell align="right">Место</TableCell>
-                          <TableCell>Игрок</TableCell>
-                          <TableCell align="right">Было</TableCell>
-                          <TableCell align="right">Стало</TableCell>
-                          <TableCell align="right">Изм.</TableCell>
-                          <TableCell align="right">K</TableCell>
-                          <TableCell align="right">Количество очков</TableCell>
-                          <TableCell align="right">Ср. рейтинг соперников</TableCell>
+                          <TableCell align="right">№</TableCell>
+                          <TableCell>Имя участника</TableCell>
+                          <TableCell align="right">Rнач</TableCell>
+                          {Array.from({ length: roundCount }, (_, roundIndex) => (
+                            <TableCell key={roundIndex} align="center">
+                              Тур {roundIndex + 1}
+                            </TableCell>
+                          ))}
+                          <TableCell align="right">Очки</TableCell>
+                          <TableCell align="right">Rср</TableCell>
+                          <TableCell align="right">Rнов</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {(tournamentsForDisplay[index] ?? []).map(({ player, points }, playerIndex) => (
+                        {displayRows.map(({ player, points, games }, playerIndex) => (
                           <TableRow key={`${player.id}-${player.name}-${playerIndex}`}>
                             <TableCell align="right">{playerIndex + 1}</TableCell>
                             <TableCell>{player.name}</TableCell>
                             <TableCell align="right">{player.oldRating}</TableCell>
-                            <TableCell align="right">{player.newRating}</TableCell>
-                            <TableCell align="right">{signed(player.change)}</TableCell>
-                            <TableCell align="right">{player.coefficient}</TableCell>
+                            {Array.from({ length: roundCount }, (_, roundIndex) => (
+                              <TableCell key={roundIndex} align="center">
+                                {formatTournamentGame(games.find((game) => game.round === roundIndex + 1))}
+                              </TableCell>
+                            ))}
                             <TableCell align="right">{points === null ? "" : formatPoints(points)}</TableCell>
                             <TableCell align="right">{averageOpponentRating(player)}</TableCell>
+                            <TableCell align="right">
+                              {player.newRating}{" "}
+                              <Box
+                                component="span"
+                                sx={{ color: player.change > 0 ? "success.main" : player.change < 0 ? "error.main" : "inherit" }}
+                              >
+                                {signed(player.change)}
+                              </Box>
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -451,7 +500,8 @@ export default function RatingCalculator() {
                   </TableContainer>
                 </AccordionDetails>
               </Accordion>
-            ))}
+              );
+            })}
           </Box>
         </>
       )}
