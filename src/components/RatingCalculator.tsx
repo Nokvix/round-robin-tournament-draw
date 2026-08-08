@@ -326,40 +326,6 @@ export default function RatingCalculator() {
             </Stack>
           </Paper>
 
-          {topChanges.length > 0 && (
-            <Paper className="section" sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Крупнейшие изменения
-              </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Игрок</TableCell>
-                      <TableCell>Турнир</TableCell>
-                      <TableCell align="right">Было</TableCell>
-                      <TableCell align="right">Стало</TableCell>
-                      <TableCell align="right">Изм.</TableCell>
-                      <TableCell align="right">Партий</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {topChanges.map((player, index) => (
-                      <TableRow key={`${player.fileName}-${player.id}-${player.name}-${index}`}>
-                        <TableCell>{player.name}</TableCell>
-                        <TableCell>{player.tournamentName}</TableCell>
-                        <TableCell align="right">{player.oldRating}</TableCell>
-                        <TableCell align="right">{player.newRating}</TableCell>
-                        <TableCell align="right">{signed(player.change)}</TableCell>
-                        <TableCell align="right">{player.gamesCount}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-          )}
-
           <Box className="section">
             {result.tournaments.map((tournament, index) => (
               <Accordion key={`${tournament.fileName}-${index}`} disableGutters>
