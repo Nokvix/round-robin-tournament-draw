@@ -30,7 +30,9 @@ import {
   parseRatingDatabase,
   parseSwmTournament,
   processRatingFiles,
-  RatingProcessingResult
+  PlayerRatingResult,
+  RatingProcessingResult,
+  SwmTournament
 } from "../utils/ratingCalculator";
 
 interface LoadedTextFile {
@@ -73,6 +75,48 @@ function decimal(value: number) {
   return Number.isInteger(value) ? String(value) : value.toFixed(2);
 }
 
+/**
+ * Формирует порядок строк для отображения итогов турнира.
+ * Рейтинг не пересчитывается: используются только результаты из SWM-файла.
+ */
+function orderPlayersByTournamentResult(
+  updatedPlayers: PlayerRatingResult[],
+  tournament: SwmTournament
+): PlayerRatingResult[] {
+  const pointsByNumber = new Map(tournament.players.map((player) => [player.number, player.totalScore]));
+  const ranking = tournament.players
+    .map((player) => {
+      const opponentsPoints = player.games
+        .filter((game) => game.played && game.opponentNumber !== null)
+        .map((game) => pointsByNumber.get(game.opponentNumber!) ?? 0);
+      const buchholz = opponentsPoints.reduce((total, points) => total + points, 0);
+      const truncatedBuchholz = opponentsPoints.length > 0 ? buchholz - Math.min(...opponentsPoints) : 0;
+
+      return { player, buchholz, truncatedBuchholz };
+    })
+    .sort((left, right) => {
+      if (right.player.totalScore !== left.player.totalScore) {
+        return right.player.totalScore - left.player.totalScore;
+      }
+      if (right.buchholz !== left.buchholz) return right.buchholz - left.buchholz;
+      if (right.truncatedBuchholz !== left.truncatedBuchholz) {
+        return right.truncatedBuchholz - left.truncatedBuchholz;
+      }
+      return left.player.number - right.player.number;
+    });
+
+  const orderById = new Map(
+    ranking.filter(({ player }) => player.fsrId).map(({ player }, index) => [player.fsrId, index])
+  );
+  const orderByName = new Map(ranking.map(({ player }, index) => [player.name, index]));
+
+  return [...updatedPlayers].sort((left, right) => {
+    const leftOrder = orderById.get(left.id) ?? orderByName.get(left.name) ?? Number.MAX_SAFE_INTEGER;
+    const rightOrder = orderById.get(right.id) ?? orderByName.get(right.name) ?? Number.MAX_SAFE_INTEGER;
+    return leftOrder - rightOrder;
+  });
+}
+
 export default function RatingCalculator() {
   const [databaseFile, setDatabaseFile] = useState<LoadedTextFile | null>(null);
   const [tournamentFiles, setTournamentFiles] = useState<LoadedTextFile[]>([]);
@@ -94,6 +138,17 @@ export default function RatingCalculator() {
       .sort((a, b) => Math.abs(b.change) - Math.abs(a.change))
       .slice(0, 20);
   }, [result]);
+
+  const tournamentsForDisplay = useMemo(() => {
+    if (!result) return [];
+
+    return result.tournaments.map((tournament, index) => {
+      const source = tournamentFiles[index];
+      if (!source) return tournament.updatedPlayers;
+
+      return orderPlayersByTournamentResult(tournament.updatedPlayers, parseSwmTournament(source.text));
+    });
+  }, [result, tournamentFiles]);
 
   const handleDatabaseUpload = async (file: File) => {
     try {
@@ -343,6 +398,7 @@ export default function RatingCalculator() {
                     <Table size="small">
                       <TableHead>
                         <TableRow>
+                          <TableCell align="right">Место</TableCell>
                           <TableCell>Игрок</TableCell>
                           <TableCell align="right">Было</TableCell>
                           <TableCell align="right">Стало</TableCell>
@@ -353,8 +409,9 @@ export default function RatingCalculator() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {tournament.updatedPlayers.map((player, playerIndex) => (
+                        {(tournamentsForDisplay[index] ?? tournament.updatedPlayers).map((player, playerIndex) => (
                           <TableRow key={`${player.id}-${player.name}-${playerIndex}`}>
+                            <TableCell align="right">{playerIndex + 1}</TableCell>
                             <TableCell>{player.name}</TableCell>
                             <TableCell align="right">{player.oldRating}</TableCell>
                             <TableCell align="right">{player.newRating}</TableCell>
