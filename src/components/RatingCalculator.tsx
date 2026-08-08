@@ -75,10 +75,19 @@ function decimal(value: number) {
   return Number.isInteger(value) ? String(value) : value.toFixed(2);
 }
 
+function formatPoints(value: number): string {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}
+
 function averageOpponentRating(player: PlayerRatingResult): string {
   if (player.details.length === 0) return "";
   const total = player.details.reduce((sum, game) => sum + game.opponentRating, 0);
-  return decimal(total / player.details.length);
+  return String(Math.round(total / player.details.length));
+}
+
+interface TournamentDisplayRow {
+  player: PlayerRatingResult;
+  points: number | null;
 }
 
 /**
@@ -88,7 +97,7 @@ function averageOpponentRating(player: PlayerRatingResult): string {
 function orderPlayersByTournamentResult(
   updatedPlayers: PlayerRatingResult[],
   tournament: SwmTournament
-): PlayerRatingResult[] {
+): TournamentDisplayRow[] {
   const pointsByNumber = new Map(tournament.players.map((player) => [player.number, player.totalScore]));
   const ranking = tournament.players
     .map((player) => {
@@ -111,16 +120,26 @@ function orderPlayersByTournamentResult(
       return left.player.number - right.player.number;
     });
 
-  const orderById = new Map(
-    ranking.filter(({ player }) => player.fsrId).map(({ player }, index) => [player.fsrId, index])
+  const resultById = new Map(
+    ranking
+      .filter(({ player }) => player.fsrId)
+      .map(({ player }, index) => [player.fsrId, { order: index, points: player.totalScore }])
   );
-  const orderByName = new Map(ranking.map(({ player }, index) => [player.name, index]));
+  const resultByName = new Map(
+    ranking.map(({ player }, index) => [player.name, { order: index, points: player.totalScore }])
+  );
 
-  return [...updatedPlayers].sort((left, right) => {
-    const leftOrder = orderById.get(left.id) ?? orderByName.get(left.name) ?? Number.MAX_SAFE_INTEGER;
-    const rightOrder = orderById.get(right.id) ?? orderByName.get(right.name) ?? Number.MAX_SAFE_INTEGER;
-    return leftOrder - rightOrder;
-  });
+  return updatedPlayers
+    .map((player) => {
+      const tournamentResult = resultById.get(player.id) ?? resultByName.get(player.name);
+      return {
+        player,
+        points: tournamentResult?.points ?? null,
+        order: tournamentResult?.order ?? Number.MAX_SAFE_INTEGER
+      };
+    })
+    .sort((left, right) => left.order - right.order)
+    .map(({ player, points }) => ({ player, points }));
 }
 
 export default function RatingCalculator() {
@@ -150,7 +169,7 @@ export default function RatingCalculator() {
 
     return result.tournaments.map((tournament, index) => {
       const source = tournamentFiles[index];
-      if (!source) return tournament.updatedPlayers;
+      if (!source) return tournament.updatedPlayers.map((player) => ({ player, points: null }));
 
       return orderPlayersByTournamentResult(tournament.updatedPlayers, parseSwmTournament(source.text));
     });
@@ -410,12 +429,12 @@ export default function RatingCalculator() {
                           <TableCell align="right">Стало</TableCell>
                           <TableCell align="right">Изм.</TableCell>
                           <TableCell align="right">K</TableCell>
+                          <TableCell align="right">Количество очков</TableCell>
                           <TableCell align="right">Ср. рейтинг соперников</TableCell>
-                          <TableCell align="right">Партий</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {(tournamentsForDisplay[index] ?? tournament.updatedPlayers).map((player, playerIndex) => (
+                        {(tournamentsForDisplay[index] ?? []).map(({ player, points }, playerIndex) => (
                           <TableRow key={`${player.id}-${player.name}-${playerIndex}`}>
                             <TableCell align="right">{playerIndex + 1}</TableCell>
                             <TableCell>{player.name}</TableCell>
@@ -423,8 +442,8 @@ export default function RatingCalculator() {
                             <TableCell align="right">{player.newRating}</TableCell>
                             <TableCell align="right">{signed(player.change)}</TableCell>
                             <TableCell align="right">{player.coefficient}</TableCell>
+                            <TableCell align="right">{points === null ? "" : formatPoints(points)}</TableCell>
                             <TableCell align="right">{averageOpponentRating(player)}</TableCell>
-                            <TableCell align="right">{player.gamesCount}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
