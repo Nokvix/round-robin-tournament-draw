@@ -161,9 +161,6 @@ export default function RatingCalculator() {
       <Typography variant="h4" fontWeight={600} gutterBottom className="no-print">
         Обсчёт российского шахматного рейтинга
       </Typography>
-      <Typography variant="subtitle1" color="text.secondary" className="no-print">
-        Клиентская обработка базы CSV и турниров Swiss Master без серверной части.
-      </Typography>
 
       <Paper className="section no-print" sx={{ p: 3 }}>
         <Stack spacing={2}>
@@ -237,7 +234,8 @@ export default function RatingCalculator() {
                   <TableRow>
                     <TableCell width={80}>№</TableCell>
                     <TableCell>Файл</TableCell>
-                    <TableCell width={150}>Кодировка</TableCell>
+                    {/* Столбец кодировки закомментил. Пока он не нужен */}
+                    {/* <TableCell width={150}>Кодировка</TableCell> */}
                     <TableCell width={160} align="right">
                       Действия
                     </TableCell>
@@ -248,7 +246,7 @@ export default function RatingCalculator() {
                     <TableRow key={`${file.fileName}-${index}`}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{file.fileName}</TableCell>
-                      <TableCell>{file.encoding}</TableCell>
+                      {/* <TableCell>{file.encoding}</TableCell> */}
                       <TableCell align="right">
                         <Tooltip title="Поднять">
                           <span>
