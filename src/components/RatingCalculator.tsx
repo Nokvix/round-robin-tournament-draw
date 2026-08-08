@@ -346,7 +346,7 @@ export default function RatingCalculator() {
           {databaseFile ? (
             <Stack direction="row" spacing={1} alignItems="center">
               <Alert severity="success" sx={{ flexGrow: 1 }}>
-                База: {databaseFile.fileName} ({databaseFile.encoding})
+                База: {databaseFile.fileName}
               </Alert>
               <Tooltip title="Удалить базу">
                 <IconButton color="error" onClick={removeDatabase}>
