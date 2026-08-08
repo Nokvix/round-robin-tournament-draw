@@ -63,9 +63,9 @@ function downloadFile(bytes: Uint8Array, fileName: string) {
   URL.revokeObjectURL(url);
 }
 
-function updatedDatabaseFileName(sourceName: string) {
-  if (!sourceName) return "rating_database_updated.csv";
-  return sourceName.replace(/(\.[^.]+)?$/, "_updated$1");
+function updatedDatabaseFileName(): string {
+  const date = new Date();
+  return `Рейт${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}.csv`;
 }
 
 function signed(value: number) {
@@ -263,7 +263,7 @@ export default function RatingCalculator() {
 
   const handleDownload = () => {
     if (!result || !databaseFile) return;
-    downloadFile(encodeWindows1251(result.csv), updatedDatabaseFileName(databaseFile.fileName));
+    downloadFile(encodeWindows1251(result.csv), updatedDatabaseFileName());
   };
 
   return (
