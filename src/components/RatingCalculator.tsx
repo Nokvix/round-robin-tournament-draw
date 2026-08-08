@@ -3,6 +3,7 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import {
   Accordion,
@@ -215,6 +216,19 @@ export default function RatingCalculator() {
     }
   };
 
+  const removeDatabase = () => {
+    setDatabaseFile(null);
+    setResult(null);
+    setError(null);
+  };
+
+  const reset = () => {
+    setDatabaseFile(null);
+    setTournamentFiles([]);
+    setResult(null);
+    setError(null);
+  };
+
   const handleTournamentsUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
@@ -318,14 +332,30 @@ export default function RatingCalculator() {
             >
               Скачать новую базу
             </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<RestartAltIcon />}
+              disabled={!databaseFile && tournamentFiles.length === 0 && !result && !error}
+              onClick={reset}
+            >
+              Сбросить
+            </Button>
           </Stack>
 
           {databaseFile ? (
-            <Alert severity="success">
-              База: {databaseFile.fileName} ({databaseFile.encoding})
-            </Alert>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Alert severity="success" sx={{ flexGrow: 1 }}>
+                База: {databaseFile.fileName} ({databaseFile.encoding})
+              </Alert>
+              <Tooltip title="Удалить базу">
+                <IconButton color="error" onClick={removeDatabase}>
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </Stack>
           ) : (
-            <Alert severity="info">База рейтингов не загружена.</Alert>
+            <Alert severity="info">База игроков не загружена.</Alert>
           )}
 
           {error && <Alert severity="error">{error}</Alert>}
