@@ -12,7 +12,9 @@ import {
   TextField,
   Typography
 } from "@mui/material";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import React, { useEffect, useMemo, useState } from "react";
+import InstructionDialog from "./components/InstructionDialog";
 import ResultsTable from "./components/ResultsTable";
 import RoundsList from "./components/RoundsList";
 import ResultDialog from "./components/ResultDialog";
@@ -98,6 +100,7 @@ export default function App() {
   const [printMode, setPrintMode] = useState<"none" | "table" | "rounds">("none");
   const [message, setMessage] = useState<string | null>(null);
   const [placeOverrides, setPlaceOverrides] = useState<Record<string, string>>({});
+  const [instructionOpen, setInstructionOpen] = useState(false);
 
   const parsed = useMemo(() => parseParticipants(participantsText), [participantsText]);
 
@@ -326,20 +329,30 @@ export default function App() {
   return (
     <Box className="app-shell">
       <Container maxWidth="xl" sx={{ py: 4 }}>
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1} className="service-nav no-print">
+        <Box className="service-nav no-print">
+          <Stack direction="row" spacing={1} className="service-nav-sections">
+            <Button
+              variant={serviceMode === "draw" ? "contained" : "outlined"}
+              onClick={() => handleServiceModeChange("draw")}
+            >
+              Жеребьёвка
+            </Button>
+            <Button
+              variant={serviceMode === "rating" ? "contained" : "outlined"}
+              onClick={() => handleServiceModeChange("rating")}
+            >
+              Обсчёт рейтинга
+            </Button>
+          </Stack>
           <Button
-            variant={serviceMode === "draw" ? "contained" : "outlined"}
-            onClick={() => handleServiceModeChange("draw")}
+            variant="outlined"
+            startIcon={<HelpOutlineIcon />}
+            onClick={() => setInstructionOpen(true)}
+            className="instruction-button"
           >
-            Жеребьёвка
+            Инструкция
           </Button>
-          <Button
-            variant={serviceMode === "rating" ? "contained" : "outlined"}
-            onClick={() => handleServiceModeChange("rating")}
-          >
-            Обсчёт рейтинга
-          </Button>
-        </Stack>
+        </Box>
 
         {serviceMode === "rating" ? (
           <RatingCalculator />
@@ -517,6 +530,12 @@ export default function App() {
           }}
         />
       )}
+
+      <InstructionDialog
+        open={instructionOpen}
+        mode={serviceMode}
+        onClose={() => setInstructionOpen(false)}
+      />
 
       <Snackbar
         open={Boolean(message)}
