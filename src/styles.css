@@ -21,6 +21,75 @@ body {
 
 .service-nav {
   margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.service-nav-sections {
+  min-width: 0;
+}
+
+.instruction-dialog-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-right: 24px;
+}
+
+.instruction-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.instruction-section + .instruction-section {
+  padding-top: 4px;
+}
+
+.instruction-steps .MuiListItem-root {
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.instruction-step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  margin-top: 3px;
+  border-radius: 50%;
+  background: #0d47a1;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.instruction-actions .MuiListItem-root {
+  padding: 8px 0;
+  border-bottom: 1px solid #e4e8f0;
+}
+
+.instruction-actions .MuiListItem-root:last-child {
+  border-bottom: 0;
+}
+
+@media (max-width: 599px) {
+  .service-nav {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .service-nav-sections {
+    flex-wrap: wrap;
+  }
+
+  .instruction-button {
+    align-self: flex-end;
+  }
 }
 
 .rating-stat {
