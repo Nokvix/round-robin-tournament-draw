@@ -29,13 +29,13 @@ import React, { useMemo, useState } from "react";
 import {
   encodeWindows1251,
   parseRatingDatabase,
-  parseSwmTournament,
-  processRatingFiles,
   PlayerRatingResult,
   RatingProcessingResult,
   SwmGame,
   SwmTournament
 } from "../utils/ratingCalculator";
+import { confirmRatingPlayer, getRatingFileFormat, PlayerSelection, prepareRatingSession, RatingQueueEntry, RatingSession } from "../utils/ratingSession";
+import RatingPlayerDialog from "./RatingPlayerDialog";
 
 interface LoadedTextFile {
   fileName: string;
@@ -55,7 +55,7 @@ async function readTextFile(file: File): Promise<LoadedTextFile> {
 }
 
 function downloadFile(bytes: Uint8Array, fileName: string) {
-  const blob = new Blob([bytes], { type: "text/csv;charset=windows-1251" });
+  const blob = new Blob([new Uint8Array(bytes)], { type: "text/csv;charset=windows-1251" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
@@ -107,7 +107,7 @@ interface TournamentDisplay {
 
 /**
  * Формирует порядок строк для отображения итогов турнира.
- * Рейтинг не пересчитывается: используются только результаты из SWM-файла.
+ * Рейтинг не пересчитывается: используются результаты загруженного турнира.
  */
 function orderPlayersByTournamentResult(
   updatedPlayers: PlayerRatingResult[],
@@ -121,13 +121,16 @@ function orderPlayersByTournamentResult(
         .map((game) => pointsByNumber.get(game.opponentNumber!) ?? 0);
       const buchholz = opponentsPoints.reduce((total, points) => total + points, 0);
       const truncatedBuchholz = opponentsPoints.length > 0 ? buchholz - Math.min(...opponentsPoints) : 0;
+      const berger = player.games.reduce((total, game) => total +
+        (game.played ? game.score * (pointsByNumber.get(game.opponentNumber!) ?? 0) : 0), 0);
 
-      return { player, buchholz, truncatedBuchholz };
+      return { player, buchholz, truncatedBuchholz, berger };
     })
     .sort((left, right) => {
       if (right.player.totalScore !== left.player.totalScore) {
         return right.player.totalScore - left.player.totalScore;
       }
+      if (tournament.tiebreak === "berger") return right.berger - left.berger || left.player.number - right.player.number;
       if (right.buchholz !== left.buchholz) return right.buchholz - left.buchholz;
       if (right.truncatedBuchholz !== left.truncatedBuchholz) {
         return right.truncatedBuchholz - left.truncatedBuchholz;
@@ -149,10 +152,14 @@ function orderPlayersByTournamentResult(
       { order: index, points: player.totalScore, games: player.games }
     ])
   );
+  const resultByNumber = new Map(ranking.map(({ player }, index) => [
+    player.number, { order: index, points: player.totalScore, games: player.games }
+  ]));
 
   return updatedPlayers
     .map((player) => {
-      const tournamentResult = resultById.get(player.id) ?? resultByName.get(player.name);
+      const tournamentResult = (player.playerNumber === undefined ? undefined : resultByNumber.get(player.playerNumber))
+        ?? resultById.get(player.id) ?? resultByName.get(player.name);
       return {
         player,
         points: tournamentResult?.points ?? null,
@@ -169,8 +176,13 @@ export default function RatingCalculator() {
   const [tournamentFiles, setTournamentFiles] = useState<LoadedTextFile[]>([]);
   const [result, setResult] = useState<RatingProcessingResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [session, setSession] = useState<RatingSession | null>(null);
+  const [selectionError, setSelectionError] = useState<string | null>(null);
+  const [completedQueue, setCompletedQueue] = useState<RatingQueueEntry[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
 
-  const canCalculate = Boolean(databaseFile) && tournamentFiles.length > 0;
+  const canCalculate = Boolean(databaseFile) && tournamentFiles.length > 0 && !session && !isUploading;
 
   const topChanges = useMemo(() => {
     if (!result) return [];
@@ -190,7 +202,7 @@ export default function RatingCalculator() {
     if (!result) return [];
 
     return result.tournaments.map((tournament, index) => {
-      const source = tournamentFiles[index];
+      const source = completedQueue[index];
       if (!source) {
         return {
           roundCount: 0,
@@ -198,21 +210,25 @@ export default function RatingCalculator() {
         } satisfies TournamentDisplay;
       }
 
-      const parsedTournament = parseSwmTournament(source.text);
+      const parsedTournament = source.tournament;
       return {
         roundCount: parsedTournament.roundCount,
         rows: orderPlayersByTournamentResult(tournament.updatedPlayers, parsedTournament)
       } satisfies TournamentDisplay;
     });
-  }, [result, tournamentFiles]);
+  }, [result, completedQueue]);
 
   const handleDatabaseUpload = async (file: File) => {
+    setIsUploading(true);
+    setCancelled(false);
     try {
       setDatabaseFile(await readTextFile(file));
       setResult(null);
       setError(null);
     } catch (uploadError) {
       setError(uploadError instanceof Error ? uploadError.message : "Не удалось загрузить базу.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -223,6 +239,8 @@ export default function RatingCalculator() {
   };
 
   const reset = () => {
+    setCancelled(false);
+    setCompletedQueue([]);
     setDatabaseFile(null);
     setTournamentFiles([]);
     setResult(null);
@@ -232,13 +250,21 @@ export default function RatingCalculator() {
   const handleTournamentsUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
+    setIsUploading(true);
+    setCancelled(false);
     try {
+      Array.from(files).forEach((file) => {
+        try { getRatingFileFormat(file.name); }
+        catch { throw new Error(`${file.name}: поддерживаются только файлы .smw и .json.`); }
+      });
       const loadedFiles = await Promise.all(Array.from(files).map((file) => readTextFile(file)));
       setTournamentFiles((prev) => [...prev, ...loadedFiles]);
       setResult(null);
       setError(null);
     } catch (uploadError) {
       setError(uploadError instanceof Error ? uploadError.message : "Не удалось загрузить файлы турниров.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -258,21 +284,47 @@ export default function RatingCalculator() {
     setResult(null);
   };
 
-  const handleCalculate = () => {
-    if (!databaseFile) return;
+  const acceptSession = (next: RatingSession) => {
+    setSelectionError(null);
+    if (next.tournamentIndex === next.queue.length) {
+      setCompletedQueue(next.queue);
+      setResult(next.result);
+      setSession(null);
+    } else {
+      setSession(next);
+    }
+  };
 
+  const handleCalculate = () => {
+    if (!databaseFile || !canCalculate) return;
+    setResult(null);
+    setCompletedQueue([]);
+    setCancelled(false);
+    setError(null);
     try {
       const database = parseRatingDatabase(databaseFile.text);
-      const tournaments = tournamentFiles.map((file) => ({
-        fileName: file.fileName,
-        tournament: parseSwmTournament(file.text)
-      }));
-      setResult(processRatingFiles(database, tournaments));
-      setError(null);
+      acceptSession(prepareRatingSession(database, tournamentFiles));
     } catch (calculateError) {
       setResult(null);
       setError(calculateError instanceof Error ? calculateError.message : "Не удалось выполнить расчёт.");
     }
+  };
+
+  const handlePlayerSelection = (selection: PlayerSelection) => {
+    if (!session) return;
+    try { acceptSession(confirmRatingPlayer(session, selection)); }
+    catch (selectionFailure) {
+      setSelectionError(selectionFailure instanceof Error ? selectionFailure.message : "Не удалось подтвердить игрока.");
+    }
+  };
+
+  const cancelCalculation = () => {
+    setSession(null);
+    setResult(null);
+    setCompletedQueue([]);
+    setSelectionError(null);
+    setError(null);
+    setCancelled(true);
   };
 
   const handleDownload = () => {
@@ -282,6 +334,8 @@ export default function RatingCalculator() {
 
   return (
     <>
+      {session && <RatingPlayerDialog key={`${session.tournamentIndex}-${session.playerIndex}`}
+        session={session} onSelect={handlePlayerSelection} onCancel={cancelCalculation} error={selectionError} />}
       <Typography variant="h4" fontWeight={600} gutterBottom className="no-print">
         Обсчёт российского шахматного рейтинга
       </Typography>
@@ -289,7 +343,7 @@ export default function RatingCalculator() {
       <Paper className="section no-print" sx={{ p: 3 }}>
         <Stack spacing={2}>
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-            <Button variant="contained" component="label" startIcon={<UploadFileIcon />}>
+            <Button variant="contained" component="label" startIcon={<UploadFileIcon />} disabled={isUploading || Boolean(session)}>
               Загрузить базу CSV
               <input
                 hidden
@@ -302,13 +356,13 @@ export default function RatingCalculator() {
                 }}
               />
             </Button>
-            <Button variant="outlined" component="label" startIcon={<UploadFileIcon />}>
-              Добавить турниры SWM
+            <Button variant="outlined" component="label" startIcon={<UploadFileIcon />} disabled={isUploading || Boolean(session)}>
+              Добавить турниры SMW / JSON
               <input
                 hidden
                 multiple
                 type="file"
-                accept=".swm,.smw,text/plain"
+                accept=".smw,.json"
                 onChange={(event) => {
                   handleTournamentsUpload(event.target.files);
                   event.currentTarget.value = "";
@@ -336,7 +390,7 @@ export default function RatingCalculator() {
               variant="outlined"
               color="error"
               startIcon={<RestartAltIcon />}
-              disabled={!databaseFile && tournamentFiles.length === 0 && !result && !error}
+              disabled={isUploading || Boolean(session) || (!databaseFile && tournamentFiles.length === 0 && !result && !error)}
               onClick={reset}
             >
               Сбросить
@@ -358,7 +412,8 @@ export default function RatingCalculator() {
             <Alert severity="info">База игроков не загружена.</Alert>
           )}
 
-          {error && <Alert severity="error">{error}</Alert>}
+          {error && <Alert severity="error" sx={{ whiteSpace: "pre-line" }}>{error}</Alert>}
+          {cancelled && <Alert severity="info">Обсчёт прерван. Все результаты этого запуска сброшены, новая база не создана.</Alert>}
         </Stack>
       </Paper>
 

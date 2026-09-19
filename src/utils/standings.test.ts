@@ -18,6 +18,7 @@ describe("computeStandings", () => {
     const tournament: Tournament = {
       id: "t1",
       name: "Test",
+      chiefJudge: "",
       date: "2026-02-07",
       players,
       shufflePlayers: false,

@@ -27,6 +27,7 @@ export interface SwmGame {
 }
 
 export interface SwmPlayer {
+  databaseMatch?: { rowIndex: number } | { newRating: number; name: string };
   number: number;
   startNumber: number;
   name: string;
@@ -38,6 +39,8 @@ export interface SwmPlayer {
 }
 
 export interface SwmTournament {
+  requiresPlayerConfirmation?: boolean;
+  tiebreak?: "berger";
   name: string;
   playerCount: number;
   roundCount: number;
@@ -55,6 +58,7 @@ export interface RatedGameDetail {
 }
 
 export interface PlayerRatingResult {
+  playerNumber?: number;
   id: string;
   name: string;
   oldRating: number;
@@ -217,7 +221,7 @@ export function parseSwmTournament(text: string): SwmTournament {
   const playerCount = Number.isFinite(headerParts[0]) ? headerParts[0] : 0;
   const roundCount = Number.isFinite(headerParts[1]) ? headerParts[1] : 0;
   if (playerCount <= 0) {
-    throw new Error("Не удалось определить количество игроков в SWM-файле.");
+    throw new Error("Не удалось определить количество игроков в SMW-файле.");
   }
 
   const warnings: string[] = [];
@@ -366,6 +370,9 @@ export function processRatingFiles(
   let updatedPlayersCount = 0;
 
   tournaments.forEach(({ fileName, tournament }) => {
+    if (tournament.requiresPlayerConfirmation && tournament.players.some((player) => !player.databaseMatch)) {
+      throw new Error("Подтвердите всех игроков JSON-турнира перед расчётом.");
+    }
     const participants = new Map<number, TournamentParticipant>();
     const tournamentWarnings = [...tournament.warnings];
 
@@ -431,6 +438,7 @@ export function processRatingFiles(
       ratedGamesCount += gamesForCalculation.length;
 
       updatedPlayers.push({
+        playerNumber: participant.player.number,
         id: participant.player.fsrId || participant.row.id,
         name: participant.player.name,
         oldRating,
@@ -501,6 +509,18 @@ function findOrCreatePlayerState(
   database: RatingDatabase,
   indexes: ReturnType<typeof buildIndexes>
 ): PlayerState {
+  if (player.databaseMatch) {
+    if ("rowIndex" in player.databaseMatch) {
+      const row = database.rows[player.databaseMatch.rowIndex];
+      if (!row) throw new Error("Выбранный игрок отсутствует в базе.");
+      return { row, created: false };
+    }
+    const row = createDatabaseRow({ ...player, name: player.databaseMatch.name, fsrId: "" }, player.databaseMatch.newRating);
+    database.rows.push(row);
+    const matches = indexes.byName.get(row.normalizedName) ?? [];
+    indexes.byName.set(row.normalizedName, [...matches, row]);
+    return { row, created: true };
+  }
   if (player.fsrId) {
     const byId = indexes.byId.get(player.fsrId);
     if (byId) return { row: byId, created: false };
