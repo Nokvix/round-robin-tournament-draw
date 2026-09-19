@@ -340,6 +340,13 @@ export default function RatingCalculator() {
         Обсчёт российского шахматного рейтинга
       </Typography>
 
+      {result && (
+        <Alert severity="success" variant="filled" role="status" className="no-print"
+          sx={{ mb: 2, bgcolor: "#d0e9d1", color: "#1b5e20", fontWeight: 600, "& .MuiAlert-icon": { color: "#1b5e20", opacity: 1 } }}>
+          Обсчёт рейтинга завершён успешно. Можно скачать новую базу.
+        </Alert>
+      )}
+
       <Paper className="section no-print" sx={{ p: 3 }}>
         <Stack spacing={2}>
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
