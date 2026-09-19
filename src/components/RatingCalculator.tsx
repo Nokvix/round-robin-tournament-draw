@@ -36,6 +36,7 @@ import {
 } from "../utils/ratingCalculator";
 import { confirmRatingPlayer, getRatingFileFormat, PlayerSelection, prepareRatingSession, RatingQueueEntry, RatingSession } from "../utils/ratingSession";
 import RatingPlayerDialog from "./RatingPlayerDialog";
+import CreatedPlayersDialog from "./CreatedPlayersDialog";
 
 interface LoadedTextFile {
   fileName: string;
@@ -510,6 +511,7 @@ export default function RatingCalculator() {
                     Создано игроков
                   </Typography>
                   <Typography variant="h5">{result.createdPlayersCount}</Typography>
+                  <CreatedPlayersDialog rows={result.database.rows} />
                 </Box>
                 <Box className="rating-stat">
                   <Typography variant="body2" color="text.secondary">
