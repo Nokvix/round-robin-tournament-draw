@@ -1,4 +1,4 @@
-// Общие размеры инструкции и окна подтверждения игроков.
+// Общие размеры инструкции и окон со списками игроков.
 export const dialogLayout = {
   "& .MuiDialog-container": { alignItems: "flex-start" },
   "& .MuiDialog-paper": {

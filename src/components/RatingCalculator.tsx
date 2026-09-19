@@ -36,6 +36,7 @@ import {
 } from "../utils/ratingCalculator";
 import { confirmRatingPlayer, getRatingFileFormat, PlayerSelection, prepareRatingSession, RatingQueueEntry, RatingSession } from "../utils/ratingSession";
 import RatingPlayerDialog from "./RatingPlayerDialog";
+import CreatedPlayersDialog from "./CreatedPlayersDialog";
 
 interface LoadedTextFile {
   fileName: string;
@@ -340,6 +341,13 @@ export default function RatingCalculator() {
         Обсчёт российского шахматного рейтинга
       </Typography>
 
+      {result && (
+        <Alert severity="success" variant="filled" role="status" className="no-print"
+          sx={{ mb: 2, bgcolor: "#d0e9d1", color: "#1b5e20", fontWeight: 600, "& .MuiAlert-icon": { color: "#1b5e20", opacity: 1 } }}>
+          Обсчёт рейтинга завершён успешно. Можно скачать новую базу.
+        </Alert>
+      )}
+
       <Paper className="section no-print" sx={{ p: 3 }}>
         <Stack spacing={2}>
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
@@ -503,6 +511,7 @@ export default function RatingCalculator() {
                     Создано игроков
                   </Typography>
                   <Typography variant="h5">{result.createdPlayersCount}</Typography>
+                  <CreatedPlayersDialog rows={result.database.rows} />
                 </Box>
                 <Box className="rating-stat">
                   <Typography variant="body2" color="text.secondary">
