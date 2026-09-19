@@ -16,9 +16,10 @@ export default function CreatedPlayersDialog({ rows }: { rows: RatingDatabaseRow
 
   return (
     <>
-      <Button size="small" className="no-print" disabled={players.length === 0}
+      <Button size="small" color="inherit" className="no-print" disabled={players.length === 0}
         onClick={() => setOpen(true)} aria-label="Просмотреть созданных игроков"
-        sx={{ p: 0, mt: 0.5, minWidth: 0, textTransform: "none", textDecoration: "underline" }}>
+        sx={{ p: 0, mt: 0.5, minWidth: 0, color: "text.secondary", textTransform: "none", textDecoration: "underline",
+          "&:hover": { color: "text.primary" } }}>
         Просмотреть
       </Button>
       <Dialog open={open} onClose={close} scroll="paper" maxWidth={false}
